@@ -1,8 +1,13 @@
 from .Game import Game
+from .QFunction import QFunction
+from .QState import QState
+import random
 
 class CLIFrontend():
     def __init__(self, game: Game) -> None:
         self.game = game
+        self.Qfunction = QFunction()
+        self.Qfunction.load_json("qfunction_1M")
     
     def main(self):
         while True:
@@ -13,7 +18,17 @@ class CLIFrontend():
             self._display_board()
             move_valid = False
             while not move_valid:
-                posX, posY = self._ask_position()
+                posX, posY = None, None
+                
+                if self.game.get_player() == self.game.player1:
+                    posX, posY = self._ask_position()
+                else:
+                    action = self.Qfunction.greedy_policy(QState(self.game.get_player(), self.game.get_board()))
+                    if action not in self.game.get_valid_moves_left():
+                        action = random.choice(self.game.get_valid_moves_left())
+                    
+                    posX, posY = action%3, action//3
+                    
                 move_valid = self.game.play_if_possible_or_do_nothing(posX, posY)
                 
                 if not move_valid:

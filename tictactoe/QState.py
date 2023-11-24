@@ -5,8 +5,13 @@ from copy import deepcopy
 class QState():
     def __init__(self, player: int, board: Board) -> None:
         self.player = player
-        self.board: List[int] = deepcopy(board.get_raw_board())
+        self.board: List[int] = board.get_raw_board()
         self.converted_board = self._convert_board()
+        self.hash = self.compute_hash()
+        
+        self.board = None
+        self.converted_board = None
+        
         
     def _convert_board(self) -> List[int]:
         converted_board = []
@@ -21,6 +26,9 @@ class QState():
         return converted_board
     
     def __hash__(self) -> int:
+        return self.hash
+
+    def compute_hash(self):
         bit_string = ''
     
         for number in self.converted_board:

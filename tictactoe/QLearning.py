@@ -2,6 +2,7 @@ from .QFunction import QFunction
 from .QState import QState
 from .Game import Game
 import random
+import json
 
 class QLearning():
     def __init__(self) -> None:
@@ -11,60 +12,66 @@ class QLearning():
         eps_decay = self._linear_decay
         game = Game()
         
+        current_player = game.player1
+        enemy_player = game.player2
+        
         if decay == "quadratic":
             eps_decay = self._quadratic_decay
         
         for x in range(max_episode):
             epsilon = eps_decay(x, max_episode)
             
-            if x%1000 == 0:
+            if x%10000 == 0:
                 (num_win, num_draw, num_no_valid_move) = self.evaluate(100)
-                print(f"{x}/{max_episode}".ljust(10), f"| {int((x/max_episode)*100)}%".ljust(6), f"| wr={num_win}%, dr={num_draw}%, fail={num_no_valid_move}")
+                print(f"{x}/{max_episode}".ljust(10), f"| {int((x/max_episode)*100)}%".ljust(6), f"| wr={num_win}%, dr={num_draw}%, fail={num_no_valid_move/100}")
+            
+            if current_player == game.player2:
+                move = random.choice(game.get_valid_moves_left())
+                posX, posY = move%3, move//3
+                game.play_if_possible_or_do_nothing(posX, posY)
             
             while not game.is_game_ended():
-                state_t = QState(game.player1, game.get_board())
-                reward = .0
+                state_t = QState(current_player, game.get_board())
                 
-                valid_move = False
-                tries_left = 10
-                while not valid_move:
-                    if tries_left > 0:
-                        action_t = self.Qfunction.epsilon_greedy_policy(state_t, epsilon)
-                        tries_left -= 1
-                    else:
-                        action_t = random.randint(0, 8)
-                        
-                    posX, posY = action_t%3, action_t//3
-                    valid_move = game.play_if_possible_or_do_nothing(posX, posY)
+                valid_moves = game.get_valid_moves_left()
+                action_t = self.Qfunction.epsilon_greedy_policy(state_t, epsilon, valid_moves)
+                posX, posY = action_t%3, action_t//3
+                
+                game.play_if_possible_or_do_nothing(posX, posY)
                     
-                state_tp1 = QState(game.player1, game.get_board())
+                state_tp1 = QState(current_player, game.get_board())
                 action_tp1 = self.Qfunction.greedy_policy(state_tp1)
 
+                reward = .0
                 if game.is_game_ended():
-                    if game.get_winner() == game.player1:
+                    if game.get_winner() == current_player:
                         reward = 1.
                     elif game.get_winner() == None:
                         reward = .0
-                
-                if not game.is_game_ended():
-                    enemy_valid_move = False
-                    while not enemy_valid_move:
-                        enemy_valid_move = game.play_if_possible_or_do_nothing(random.randint(0, 2), random.randint(0, 2))
-                        
-                if game.is_game_ended():
-                    if game.get_winner() == game.player2:
-                        reward = -1.
-                    elif game.get_winner() == None:
-                        reward = .0
+                elif not game.is_game_ended():
+                    move = random.choice(game.get_valid_moves_left())
+                    posX, posY = move%3, move//3
+                    game.play_if_possible_or_do_nothing(posX, posY)
+                    
+                    if game.is_game_ended():
+                        if game.get_winner() == enemy_player:
+                            reward = -1.
+                        elif game.get_winner() == None:
+                            reward = .0
                         
                 val = self.Qfunction.get_state_action_value(state_t, action_t)
                 valp1 = self.Qfunction.get_state_action_value(state_tp1, action_tp1)
-                self.Qfunction.set_state_action_value(state_t, action_t, val + lr * (reward + discount_rate * valp1 - val))
+                new_value = val + lr * (reward + discount_rate * valp1 - val)
+                self.Qfunction.set_state_action_value(state_t, action_t, new_value)
+            
+            temp_player = current_player
+            current_player = enemy_player
+            enemy_player = temp_player
             
             game.restart()
             
         (num_win, num_draw, num_no_valid_move) = self.evaluate(10000)
-        print(f"{x}/{max_episode}".ljust(10), f"| {int((x/max_episode)*100)}%".ljust(6), f"| wr={int((num_win/10000)*100)}%, dr={int((num_draw/10000)*100)}%, fail={num_no_valid_move}")
+        print(f"{x}/{max_episode}".ljust(10), f"| {int((x/max_episode)*100)}%".ljust(6), f"| wr={int((num_win/10000)*100)}%, dr={int((num_draw/10000)*100)}%, fail={num_no_valid_move/10000}")
     
     def evaluate(self, num_games: int):
         num_wins = 0
@@ -105,3 +112,9 @@ class QLearning():
 
     def _quadratic_decay(self, x:int, max_x:int) -> float:
         return self._linear_decay(x, max_x)**2
+    
+    def save_to_json(self, filename):
+        self.Qfunction.save_to_json(filename)
+    
+    def load_json(self, filename):
+        self.Qfunction.load_json(filename)

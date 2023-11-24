@@ -13,21 +13,17 @@ class Board():
     def __init__(self) -> None:
         self.board: List[int] = [None] * 9
         self.playNumber = 0
+        self.valid_moves_left: List[int] = list(range(0,9))
     
     def play_if_possible_or_do_nothing(self, posX: int, posY: int, player: int) -> bool:
-        if posX < 0 or posX > 2:
-            return False
-        
-        if posY < 0 or posY > 2:
-            return False
-        
         coords: int = posX + posY*3
         
-        if self.board[coords] != None:
-           return False
+        if not self.is_valid_move(posX, posY):
+            return False
 
         self.board[coords] = player
         self.playNumber += 1
+        self.valid_moves_left.remove(coords)
         return True
     
     def get_board_winner(self) -> int:
@@ -47,7 +43,24 @@ class Board():
             return diag_win
 
         return 0
+    
+    def is_valid_move(self, posX: int, posY: int):
+        if posX < 0 or posX > 2:
+            return False
         
+        if posY < 0 or posY > 2:
+            return False
+        
+        coords: int = posX + posY*3
+        
+        if self.board[coords] != None:
+           return False
+
+        return True
+
+    def get_valid_moves_left(self) -> List[int]:
+        return self.valid_moves_left
+    
     def is_board_full(self) -> bool:
         return self.playNumber == 9
         

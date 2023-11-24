@@ -1,6 +1,7 @@
 import json
 import random
 from .QState import QState
+from typing import List
 
 class QFunction():
     def __init__(self, random_seed = 0) -> None:
@@ -19,9 +20,9 @@ class QFunction():
                 max_a = i
         return max_a
     
-    def epsilon_greedy_policy(self, state: QState, epsilon: float) -> int:
+    def epsilon_greedy_policy(self, state: QState, epsilon: float, valid_moves: List[int]) -> int:
         if self.random.random() < epsilon:
-            return self.random.randint(0, 8)
+            return self.random.choice(valid_moves)
         else:
             return self.greedy_policy(state)
     
@@ -31,16 +32,22 @@ class QFunction():
     def set_state_action_value(self, state: QState, action: int, value: float):
         self.Qtable[state][action] = value
     
-    def to_json(self) -> str:
-        return json.dumps(self.Qtable)
+    def save_to_json(self, filename: str) -> None:
+        with open(filename, "w") as f:
+            f.write(json.dumps(self.Qtable))
     
-    def load_json(self, json_str: str) -> bool:
-        obj = json.loads(json_str)
+    def load_json(self, filename: str) -> bool:
+        obj = None
+        with open(filename, "r") as f:
+            obj = json.loads(f.read())
         
-        if not isinstance(obj, dict[int, tuple[int,float]]):
+        if not isinstance(obj, dict):
             return False
         
-        self.Qtable = obj
+        for key in obj.keys():
+            obj[key] = {int(keyy): obj[key][keyy] for keyy in obj[key].keys()}
+        
+        self.Qtable = {int(key): obj[key] for key in obj.keys()}
         return True
     
     def initialize_qtable(self) -> dict[int, dict[int, float]]:
@@ -54,4 +61,3 @@ class QFunction():
         for i in range(0, 9):
             state[i] = 0
         return state
-        

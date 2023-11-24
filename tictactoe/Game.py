@@ -50,3 +50,6 @@ class Game():
     
     def get_player(self):
         return self.current_player
+    
+    def get_valid_moves_left(self):
+        return self.board.get_valid_moves_left()
