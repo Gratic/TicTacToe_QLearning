@@ -16,8 +16,8 @@ class QFunction():
         max_a = 0
         max_v = 0
         for i in range(0,9):
-            if self.Qtable[state][i] > max_v:
-                max_v = self.Qtable[state][i]
+            if self.Qtable[state.hash][i] > max_v:
+                max_v = self.Qtable[state.hash][i]
                 max_a = i
         return max_a
     
@@ -28,10 +28,10 @@ class QFunction():
             return self.greedy_policy(state)
     
     def get_state_action_value(self, state: QState, action: int) -> float:
-        return self.Qtable[state][action]
+        return self.Qtable[state.hash][action]
     
     def set_state_action_value(self, state: QState, action: int, value: float):
-        self.Qtable[state][action] = value
+        self.Qtable[state.hash][action] = value
     
     def save_to_json(self, filename: str) -> None:
         with open(filename, "w") as f:
