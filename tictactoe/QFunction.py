@@ -2,10 +2,11 @@ import json
 import random
 from .QState import QState
 from typing import List
+from collections import defaultdict
 
 class QFunction():
     def __init__(self, random_seed = 0) -> None:
-        self.Qtable:dict[int, dict[int,float]] = self.initialize_qtable()
+        self.Qtable:dict[int, dict[int,float]] = defaultdict(self._init_state_Qtable())
         self.random = random.Random()
         
         if random_seed != 0:
@@ -50,11 +51,11 @@ class QFunction():
         self.Qtable = {int(key): obj[key] for key in obj.keys()}
         return True
     
-    def initialize_qtable(self) -> dict[int, dict[int, float]]:
-        qtable = dict()
-        for i in range(0, 524288):
-            qtable[i] = self._init_state_Qtable()
-        return qtable
+    # def initialize_qtable(self) -> dict[int, dict[int, float]]:
+    #     qtable = dict()
+    #     for i in range(0, 524288):
+    #         qtable[i] = self._init_state_Qtable()
+    #     return qtable
 
     def _init_state_Qtable(self) -> dict[int, float]:
         state = dict()

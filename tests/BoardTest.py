@@ -15,19 +15,21 @@ class BoardTest(unittest.TestCase):
     
     @parameterized.expand([-2, -1, 3, 4])
     def test_play_if_possible_or_do_nothing_posX_false(self, x):
-        self.assertFalse(self.board.play_if_possible_or_do_nothing(x, 1, 0), f"x={x} should produce a False result.")
+        with self.assertRaises(ValueError):
+            self.board.play_if_possible_or_do_nothing(x, 1, 0)
     
     @parameterized.expand([0, 1, 2])
     def test_play_if_possible_or_do_nothing_posX_true(self, x):
-        self.assertTrue(self.board.play_if_possible_or_do_nothing(x, 1, 0), f"x={x} should produce a True result.")
+        self.board.play_if_possible_or_do_nothing(x, 1, 0)
         
     @parameterized.expand([-2, -1, 3, 4])
     def test_play_if_possible_or_do_nothing_posY_false(self, y):
-        self.assertFalse(self.board.play_if_possible_or_do_nothing(1, y, 0), f"y={y} should produce a False result.")
+        with self.assertRaises(ValueError):
+            self.board.play_if_possible_or_do_nothing(1, y, 0)
         
     @parameterized.expand([0, 1, 2])
-    def test_play_if_possible_or_do_nothing_posX_true(self, y):
-        self.assertTrue(self.board.play_if_possible_or_do_nothing(1, y, 0), f"y={y} should produce a True result.")
+    def test_play_if_possible_or_do_nothing_posY_true(self, y):
+        self.board.play_if_possible_or_do_nothing(1, y, 0)
     
     @parameterized.expand([(-1, -1),
                            (-1, 0),
@@ -40,18 +42,46 @@ class BoardTest(unittest.TestCase):
                            (3, 1),
                            (3, 2)])
     def test_play_if_possible_or_do_nothing_posX_posY(self, x, y):
-        self.assertFalse(self.board.play_if_possible_or_do_nothing(x, y, 0), f"The ({x},{y}) produce a True answer when it should produce False.")
+        with self.assertRaises(ValueError):
+            self.board.play_if_possible_or_do_nothing(x, y, 0)
     
     def test_play_if_possible_or_do_nothing_fill_all_board_once(self):
-        self.board.play_if_possible_or_do_nothing(0, 0, 1)
-        self.board.play_if_possible_or_do_nothing(0, 1, 1)
-        self.board.play_if_possible_or_do_nothing(0, 2, 1)
-        self.board.play_if_possible_or_do_nothing(1, 0, 1)
-        self.board.play_if_possible_or_do_nothing(1, 1, 1)
-        self.board.play_if_possible_or_do_nothing(1, 2, 1)
-        self.board.play_if_possible_or_do_nothing(2, 0, 1)
-        self.board.play_if_possible_or_do_nothing(2, 1, 1)
-        self.board.play_if_possible_or_do_nothing(2, 2, 1)
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(0, 0, 1))
+        self.assertEqual(self.board.valid_moves_left, [1, 2, 3, 4, 5, 6, 7, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 8)
+        
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(0, 1, 1))
+        self.assertEqual(self.board.valid_moves_left, [1, 2, 4, 5, 6, 7, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 7)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(0, 2, 1))
+        self.assertEqual(self.board.valid_moves_left, [1, 2, 4, 5, 7, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 6)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(1, 0, 1))
+        self.assertEqual(self.board.valid_moves_left, [2, 4, 5, 7, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 5)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(1, 1, 1))
+        self.assertEqual(self.board.valid_moves_left, [2, 5, 7, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 4)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(1, 2, 1))
+        self.assertEqual(self.board.valid_moves_left, [2, 5, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 3)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(2, 0, 1))
+        self.assertEqual(self.board.valid_moves_left, [5, 8])
+        self.assertEqual(len(self.board.valid_moves_left), 2)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(2, 1, 1))
+        self.assertEqual(self.board.valid_moves_left, [8])
+        self.assertEqual(len(self.board.valid_moves_left), 1)
+
+        self.assertTrue(self.board.play_if_possible_or_do_nothing(2, 2, 1))
+        self.assertEqual(self.board.valid_moves_left, [])
+        self.assertEqual(len(self.board.valid_moves_left), 0)
+
     
     @parameterized.expand([(0,0),
                            (0,1),
@@ -129,3 +159,29 @@ class BoardTest(unittest.TestCase):
         self.board.play_if_possible_or_do_nothing(0, 2, 1)
         self.assertEqual(self.board._check_any_diagonal_winning(), 1)
         self.assertEqual(self.board.get_board_winner(), 1)
+    
+    @parameterized.expand([(-1, -1),
+                           (-1, 0),
+                           (-1, 1),
+                           (-1, 2),
+                           (-1, 3),
+                           (3, -1),
+                           (3, 3),
+                           (3, 0),
+                           (3, 1),
+                           (3, 2)])
+    def test_coords_to_cell_raises_Value_Error(self, x, y):
+        with self.assertRaises(ValueError):
+            self.board.coords_to_cell(x, y)
+    
+    @parameterized.expand([(0, 0),
+                           (1, 0),
+                           (2, 0),
+                           (0, 1),
+                           (1, 1),
+                           (2, 1),
+                           (0, 2),
+                           (1, 2),
+                           (2, 2)])
+    def test_coords_to_cell_good_values(self, x, y):
+            self.assertEqual(self.board.coords_to_cell(x, y), x + y*3)

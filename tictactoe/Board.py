@@ -16,7 +16,7 @@ class Board():
         self.valid_moves_left: List[int] = list(range(0,9))
     
     def play_if_possible_or_do_nothing(self, posX: int, posY: int, player: int) -> bool:
-        coords: int = posX + posY*3
+        coords: int = self.coords_to_cell(posX, posY)
         
         if not self.is_valid_move(posX, posY):
             return False
@@ -44,19 +44,14 @@ class Board():
 
         return 0
     
-    def is_valid_move(self, posX: int, posY: int):
-        if posX < 0 or posX > 2:
-            return False
-        
-        if posY < 0 or posY > 2:
-            return False
-        
-        coords: int = posX + posY*3
-        
-        if self.board[coords] != None:
-           return False
+    def is_valid_move(self, posX: int, posY: int) -> bool:
+        return (self.coords_to_cell(posX, posY) in self.get_valid_moves_left())
 
-        return True
+    def coords_to_cell(self, posX: int, posY: int) -> int:
+        if posX < 0 or posX > 2 or posY < 0 or posY > 2:
+            raise ValueError("Column and Line position must be between [0;2].")
+        
+        return posX + posY*3
 
     def get_valid_moves_left(self) -> List[int]:
         return self.valid_moves_left
