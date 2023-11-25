@@ -44,9 +44,9 @@ class QFunctionTest(unittest.TestCase):
     def test_init_state_Qtable(self):
         self.assertEqual(QFunction._init_state_Qtable(), {})
     
-    def test_greedy_policy(self):
+    def test_greedy_policy_valid(self):
         self.QFunction.set_state_action_value(QState(1, Board()), 5, 1)
-        self.assertEqual(self.QFunction.greedy_policy(QState(1, Board())), 5)
+        self.assertEqual(self.QFunction.greedy_policy(QState(1, Board()), [5]), 5)
         
     def test_save_to_json_empty(self):
         self.QFunction.save_to_json("empty_test.json")

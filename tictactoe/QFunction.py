@@ -12,11 +12,11 @@ class QFunction():
         if random_seed != 0:
             self.random.seed(random_seed)
     
-    def greedy_policy(self, state: QState) -> int:
-        max_a = 0
-        max_v = 0
+    def greedy_policy(self, state: QState, valid_moves: List[int]) -> int:
+        max_a = -1
+        max_v = -1
         for i in range(0,9):
-            if self.Qtable[state.hash][i] > max_v:
+            if i in valid_moves and self.Qtable[state.hash][i] > max_v:
                 max_v = self.Qtable[state.hash][i]
                 max_a = i
         return max_a
@@ -25,7 +25,7 @@ class QFunction():
         if self.random.random() < epsilon:
             return self.random.choice(valid_moves)
         else:
-            return self.greedy_policy(state)
+            return self.greedy_policy(state, valid_moves)
     
     def get_state_action_value(self, state: QState, action: int) -> float:
         return self.Qtable[state.hash][action]

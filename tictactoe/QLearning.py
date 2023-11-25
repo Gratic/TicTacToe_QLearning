@@ -19,7 +19,7 @@ class QLearning():
             eps_decay = self._quadratic_decay
         
         for x in range(max_episode):
-            epsilon = eps_decay(x, max_episode)
+            epsilon = max(0.1, eps_decay(x, max_episode))
             
             if x%10000 == 0:
                 (num_win, num_draw, num_no_valid_move) = self.evaluate(100)
@@ -49,8 +49,12 @@ class QLearning():
                     elif game.get_winner() == None:
                         reward = .0
                 elif not game.is_game_ended():
-                    move = random.choice(game.get_valid_moves_left())
-                    posX, posY = move%3, move//3
+                    posX, posY = None, None
+                    if random.random() < (1-epsilon):
+                        move = random.choice(game.get_valid_moves_left())
+                        posX, posY = move%3, move//3
+                    else:
+                        move = self.Qfunction.greedy_policy(QState(game.get_player(), game.get_board()), game.get_valid_moves_left())
                     game.play_if_possible_or_do_nothing(posX, posY)
                     
                     if game.is_game_ended():

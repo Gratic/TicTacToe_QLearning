@@ -23,7 +23,7 @@ class CLIFrontend():
                 if self.game.get_player() == self.game.player1:
                     posX, posY = self._ask_position()
                 else:
-                    action = self.Qfunction.greedy_policy(QState(self.game.get_player(), self.game.get_board()))
+                    action = self.Qfunction.greedy_policy(QState(self.game.get_player(), self.game.get_board()), self.game.get_valid_moves_left())
                     if action not in self.game.get_valid_moves_left():
                         action = random.choice(self.game.get_valid_moves_left())
                     
