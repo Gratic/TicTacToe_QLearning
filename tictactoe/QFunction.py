@@ -46,9 +46,13 @@ class QFunction():
             return False
         
         for key in obj.keys():
-            obj[key] = {int(keyy): obj[key][keyy] for keyy in obj[key].keys()}
+            dc = defaultdict(lambda: 0.)
+            dc.update({int(keyy): obj[key][keyy] for keyy in obj[key].keys()})
+            obj[key] = dc
         
-        self.Qtable = {int(key): obj[key] for key in obj.keys()}
+        self.Qtable = defaultdict(self._init_state_Qtable)
+        self.Qtable.update({int(key): obj[key] for key in obj.keys()})
+        
         return True
     
     # def initialize_qtable(self) -> dict[int, dict[int, float]]:
@@ -59,7 +63,5 @@ class QFunction():
 
     @staticmethod
     def _init_state_Qtable() -> dict[int, float]:
-        state = dict()
-        for i in range(0, 9):
-            state[i] = 0
+        state = defaultdict(lambda: 0.)
         return state
