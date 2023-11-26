@@ -40,7 +40,7 @@ class QLearning():
                 game.play_if_possible_or_do_nothing(posX, posY)
                     
                 state_tp1 = QState(current_player, game.get_board())
-                action_tp1 = self.Qfunction.greedy_policy(state_tp1)
+                action_tp1 = self.Qfunction.greedy_policy(state_tp1, game.get_valid_moves_left())
 
                 reward = .0
                 if game.is_game_ended():
@@ -55,6 +55,8 @@ class QLearning():
                         posX, posY = move%3, move//3
                     else:
                         move = self.Qfunction.greedy_policy(QState(game.get_player(), game.get_board()), game.get_valid_moves_left())
+                        posX, posY = move%3, move//3
+                        
                     game.play_if_possible_or_do_nothing(posX, posY)
                     
                     if game.is_game_ended():
@@ -87,7 +89,7 @@ class QLearning():
             while not game.is_game_ended():
                 if game.get_player() == game.player1:
                     state = QState(game.player1, game.get_board())
-                    action = self.Qfunction.greedy_policy(state)
+                    action = self.Qfunction.greedy_policy(state, game.get_valid_moves_left())
                     posX, posY = action%3, action//3
                     
                     valid_move = game.play_if_possible_or_do_nothing(posX, posY)
