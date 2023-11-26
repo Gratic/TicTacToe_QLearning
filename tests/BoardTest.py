@@ -128,7 +128,6 @@ class BoardTest(unittest.TestCase):
         self.board.play_if_possible_or_do_nothing(0, 0, 1)
         self.board.play_if_possible_or_do_nothing(1, 0, 1)
         self.board.play_if_possible_or_do_nothing(2, 0, 1)
-        print(self.board.get_raw_board())
         self.assertEqual(self.board._check_any_line_winning(), 1)
         self.assertEqual(self.board.get_board_winner(), 1)
     
