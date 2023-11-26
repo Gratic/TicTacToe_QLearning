@@ -7,7 +7,7 @@ class CLIFrontend():
     def __init__(self, game: Game) -> None:
         self.game = game
         self.Qfunction = QFunction()
-        self.Qfunction.load_json("qfunction_1M")
+        self.Qfunction.load_json("qfunction_10M_2.json")
     
     def main(self):
         while True:
