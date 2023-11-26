@@ -1,5 +1,6 @@
 import unittest
-from tictactoe import QFunction, QState, Board
+from tictactoe.QLearning import QFunction, QState
+from tictactoe import Board
 from collections import defaultdict
 import os
 import json

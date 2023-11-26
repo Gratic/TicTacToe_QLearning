@@ -16,6 +16,10 @@ class Board():
         self.valid_moves_left: List[int] = list(range(0,9))
     
     def play_if_possible_or_do_nothing(self, posX: int, posY: int, player: int) -> bool:
+        '''
+        Both posX and posY must be in [0;2] or ValueError will be raised.
+        It is not possible to play on a cell already played.
+        '''
         coords: int = self.coords_to_cell(posX, posY)
         
         if not self.is_valid_move(posX, posY):
@@ -48,6 +52,7 @@ class Board():
         return (self.coords_to_cell(posX, posY) in self.get_valid_moves_left())
 
     def coords_to_cell(self, posX: int, posY: int) -> int:
+        '''Both posX and posY must be in [0;2] or ValueError will be raised.'''
         if posX < 0 or posX > 2 or posY < 0 or posY > 2:
             raise ValueError("Column and Line position must be between [0;2].")
         

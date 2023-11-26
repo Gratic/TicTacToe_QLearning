@@ -1,5 +1,4 @@
 import unittest
-from parameterized import parameterized
 from tictactoe import Game
 
 class GameTest(unittest.TestCase):

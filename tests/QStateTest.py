@@ -1,5 +1,6 @@
 import unittest
-from tictactoe import QState, Board
+from tictactoe.QLearning import QState
+from tictactoe import Board
 
 class QStateTest(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:

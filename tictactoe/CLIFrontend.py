@@ -1,6 +1,6 @@
 from .Game import Game
-from .QFunction import QFunction
-from .QState import QState
+from .QLearning.QFunction import QFunction
+from .QLearning.QState import QState
 import random
 
 class CLIFrontend():

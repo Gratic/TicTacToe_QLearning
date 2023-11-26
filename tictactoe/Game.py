@@ -10,6 +10,10 @@ class Game():
         self.winner = None
         
     def play_if_possible_or_do_nothing(self, posX: int, posY: int) -> bool:
+        '''
+        Automatically switch the player that plays if the move is correct.
+        Also check for winner after each move.
+        '''
         if self.game_ended:
             return False
         

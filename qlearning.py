@@ -1,4 +1,4 @@
-from tictactoe import QLearning
+from tictactoe.QLearning import QLearning
 
 if __name__ == "__main__":
     qlearning = QLearning()

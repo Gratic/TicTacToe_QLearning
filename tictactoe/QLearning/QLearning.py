@@ -1,8 +1,7 @@
 from .QFunction import QFunction
 from .QState import QState
-from .Game import Game
+from ..Game import Game
 import random
-import json
 
 class QLearning():
     def __init__(self) -> None:

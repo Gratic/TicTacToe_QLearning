@@ -54,12 +54,6 @@ class QFunction():
         self.Qtable.update({int(key): obj[key] for key in obj.keys()})
         
         return True
-    
-    # def initialize_qtable(self) -> dict[int, dict[int, float]]:
-    #     qtable = dict()
-    #     for i in range(0, 524288):
-    #         qtable[i] = self._init_state_Qtable()
-    #     return qtable
 
     @staticmethod
     def _init_state_Qtable() -> dict[int, float]:
